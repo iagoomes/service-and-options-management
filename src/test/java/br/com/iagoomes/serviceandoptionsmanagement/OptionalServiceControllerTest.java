@@ -41,7 +41,7 @@ class OptionalServiceControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private OptionalServiceServiceImpl customerService;
+    private OptionalServiceServiceImpl optionalServiceService;
     private OptionalServiceDTO optionalServiceDTO;
     private OptionalService optionalService;
 
@@ -62,7 +62,7 @@ class OptionalServiceControllerTest {
         // Arrange
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8080");
         URI uri = uriBuilder.path("v1/optional_services_option/{id}").buildAndExpand("1").toUri();
-        when(customerService.createService(any(OptionalServiceDTO.class), any(UriComponentsBuilder.class)))
+        when(optionalServiceService.createService(any(OptionalServiceDTO.class), any(UriComponentsBuilder.class)))
                 .thenReturn(ResponseEntity.created(uri).body(this.optionalServiceDTO));
 
         // Act & Assert
@@ -72,14 +72,14 @@ class OptionalServiceControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-        verify(customerService, times(1))
+        verify(optionalServiceService, times(1))
                 .createService(any(OptionalServiceDTO.class), any(UriComponentsBuilder.class));
     }
 
     @Test
     void findCustomer() throws Exception {
         // Arrange
-        when(customerService.getService(anyLong()))
+        when(optionalServiceService.getService(anyLong()))
                 .thenReturn(ResponseEntity.ok(this.optionalServiceDTO));
 
         // Act & Assert
@@ -88,7 +88,7 @@ class OptionalServiceControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(customerService, times(1))
+        verify(optionalServiceService, times(1))
                 .getService(anyLong());
     }
 
@@ -96,7 +96,7 @@ class OptionalServiceControllerTest {
     void findCustomers() throws Exception {
         // Arrange
         Page<OptionalServiceDTO> page = new PageImpl<>(Collections.singletonList(optionalServiceDTO));
-        when(customerService.getAllServices(any(Pageable.class)))
+        when(optionalServiceService.getAllServices(any(Pageable.class)))
                 .thenReturn(ResponseEntity.ok(page));
 
         // Act & Assert
@@ -111,7 +111,7 @@ class OptionalServiceControllerTest {
     @Test
     void updateCustomer() throws Exception {
         // Arrange
-        when(customerService.updateService(anyLong(), any(OptionalServiceDTO.class)))
+        when(optionalServiceService.updateService(anyLong(), any(OptionalServiceDTO.class)))
                 .thenReturn(ResponseEntity.ok(optionalServiceDTO));
 
         // Act & Assert
@@ -125,7 +125,7 @@ class OptionalServiceControllerTest {
     @Test
     void deleteCustomer() throws Exception {
         // Arrange
-        when(customerService.deleteService(anyLong()))
+        when(optionalServiceService.deleteService(anyLong()))
                 .thenReturn(ResponseEntity.noContent().build());
 
         // Act & Assert
