@@ -1,9 +1,9 @@
-package br.com.iagoomes.serviceandoptionsmanagement;
+package br.com.iagoomes.serviceandoptionsmanagement.controller;
 
 
-import br.com.iagoomes.serviceandoptionsmanagement.domain.service.optional.OptionalService;
-import br.com.iagoomes.serviceandoptionsmanagement.domain.service.optional.OptionalServiceDTO;
-import br.com.iagoomes.serviceandoptionsmanagement.domain.service.optional.impl.OptionalServiceServiceImpl;
+import br.com.iagoomes.serviceandoptionsmanagement.domain.service.option.ServiceOption;
+import br.com.iagoomes.serviceandoptionsmanagement.domain.service.option.ServiceOptionDTO;
+import br.com.iagoomes.serviceandoptionsmanagement.domain.service.option.ServiceOptionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,21 +37,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-class OptionalServiceControllerTest {
+class ServiceOptionControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private OptionalServiceServiceImpl optionalServiceService;
-    private OptionalServiceDTO optionalServiceDTO;
-    private OptionalService optionalService;
+    private ServiceOptionService serviceOptionService;
+    private ServiceOptionDTO serviceOptionDTO;
+    private ServiceOption serviceOption;
 
     @BeforeEach
     void setUp() {
-        this.optionalServiceDTO = OptionalServiceDTO.builder()
+        this.serviceOptionDTO = ServiceOptionDTO.builder()
                 .name("Almoço")
-                .price(new BigDecimal("50"))
+                .pricePerPerson(new BigDecimal("50"))
                 .build();
-        this.optionalService = OptionalService.builder()
+        this.serviceOption = ServiceOption.builder()
                 .id(1L)
                 .name("Almoço")
                 .build();
@@ -61,46 +61,46 @@ class OptionalServiceControllerTest {
     void createCustomerTest() throws Exception {
         // Arrange
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8080");
-        URI uri = uriBuilder.path("v1/optional_services_option/{id}").buildAndExpand("1").toUri();
-        when(optionalServiceService.createService(any(OptionalServiceDTO.class), any(UriComponentsBuilder.class)))
-                .thenReturn(ResponseEntity.created(uri).body(this.optionalServiceDTO));
+        URI uri = uriBuilder.path("v1/services_option/{id}").buildAndExpand("1").toUri();
+        when(serviceOptionService.createService(any(ServiceOptionDTO.class), any(UriComponentsBuilder.class)))
+                .thenReturn(ResponseEntity.created(uri).body(this.serviceOptionDTO));
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/v1/optional_services_option")
-                        .content(asJsonString(optionalServiceDTO))
+                        .post("/v1/services_option")
+                        .content(asJsonString(serviceOptionDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-        verify(optionalServiceService, times(1))
-                .createService(any(OptionalServiceDTO.class), any(UriComponentsBuilder.class));
+        verify(serviceOptionService, times(1))
+                .createService(any(ServiceOptionDTO.class), any(UriComponentsBuilder.class));
     }
 
     @Test
     void findCustomer() throws Exception {
         // Arrange
-        when(optionalServiceService.getService(anyLong()))
-                .thenReturn(ResponseEntity.ok(this.optionalServiceDTO));
+        when(serviceOptionService.getService(anyLong()))
+                .thenReturn(ResponseEntity.ok(this.serviceOptionDTO));
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/v1/optional_services_option/{id}", this.optionalService.getId())
+                        .get("/v1/services_option/{id}", this.serviceOption.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(optionalServiceService, times(1))
+        verify(serviceOptionService, times(1))
                 .getService(anyLong());
     }
 
     @Test
     void findCustomers() throws Exception {
         // Arrange
-        Page<OptionalServiceDTO> page = new PageImpl<>(Collections.singletonList(optionalServiceDTO));
-        when(optionalServiceService.getAllServices(any(Pageable.class)))
+        Page<ServiceOptionDTO> page = new PageImpl<>(Collections.singletonList(serviceOptionDTO));
+        when(serviceOptionService.getAllServices(any(Pageable.class)))
                 .thenReturn(ResponseEntity.ok(page));
 
         // Act & Assert
-        mockMvc.perform(get("/v1/optional_services_option")
+        mockMvc.perform(get("/v1/services_option")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -111,12 +111,12 @@ class OptionalServiceControllerTest {
     @Test
     void updateCustomer() throws Exception {
         // Arrange
-        when(optionalServiceService.updateService(anyLong(), any(OptionalServiceDTO.class)))
-                .thenReturn(ResponseEntity.ok(optionalServiceDTO));
+        when(serviceOptionService.updateService(anyLong(), any(ServiceOptionDTO.class)))
+                .thenReturn(ResponseEntity.ok(serviceOptionDTO));
 
         // Act & Assert
-        mockMvc.perform(put("/v1/optional_services_option/{id}", this.optionalService.getId())
-                        .content(asJsonString(optionalServiceDTO))
+        mockMvc.perform(put("/v1/services_option/{id}", this.serviceOption.getId())
+                        .content(asJsonString(serviceOptionDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -125,11 +125,11 @@ class OptionalServiceControllerTest {
     @Test
     void deleteCustomer() throws Exception {
         // Arrange
-        when(optionalServiceService.deleteService(anyLong()))
+        when(serviceOptionService.deleteService(anyLong()))
                 .thenReturn(ResponseEntity.noContent().build());
 
         // Act & Assert
-        mockMvc.perform(delete("/v1/optional_services_option/{id}", this.optionalService.getId())
+        mockMvc.perform(delete("/v1/services_option/{id}", this.serviceOption.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
